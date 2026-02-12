@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@source not "../../*.txt";
+@source not "../../*.jsonl";
+
+:root {
+  --background: #0f1117;
+  --foreground: #e5e7eb;
+  --card-bg: #1a1d27;
+  --card-border: #2a2d3a;
+  --input-bg: #1e2130;
+  --input-border: #363a4a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #363a4a;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4e5e;
+}
+
+/* Focus ring */
+*:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Date input - combined text + calendar picker */
+.date-input {
+  color-scheme: dark;
+  position: relative;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Calendar icon overlay */
+.date-input-wrapper {
+  position: relative;
+}
+
+.date-input-wrapper .calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #4a4e5e;
+}
