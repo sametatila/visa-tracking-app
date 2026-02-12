@@ -4,7 +4,7 @@ on:
   schedule:
     # Her gün UTC 03:00'te çalışır (Türkiye saati 06:00)
     - cron: '0 3 * * *'
-  workflow_dispatch: # Manuel tetikleme
+  workflow_dispatch:
 
 jobs:
   backup:
