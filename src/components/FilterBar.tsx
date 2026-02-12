@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { FilterState, Consulate } from '@/lib/types';
-import { CONSULATES, CONSULATE_LABELS } from '@/lib/constants';
+import { FilterState, Consulate, VisaType } from '@/lib/types';
+import { CONSULATES, CONSULATE_LABELS, VISA_TYPES, VISA_TYPE_LABELS } from '@/lib/constants';
 
 interface FilterBarProps {
   filter: FilterState;
@@ -174,6 +174,14 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
     onFilterChange({ consulates: next });
   };
 
+  const toggleVisaType = (v: VisaType) => {
+    const current = filter.visaTypes;
+    const next = current.includes(v)
+      ? current.filter((x) => x !== v)
+      : [...current, v];
+    onFilterChange({ visaTypes: next });
+  };
+
   const handleFromChange = (v: string) => {
     const patch: Partial<FilterState> = { appointmentMonthFrom: v };
     // Bitiş ayı başlangıçtan önce ise bitiş'i de güncelle
@@ -214,7 +222,7 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
       </button>
 
       <div className={`p-5 ${expanded ? 'block' : 'hidden'} sm:block`}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div>
             <span className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-2">
               Konsolosluk
@@ -231,6 +239,27 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
                   }`}
                 >
                   {CONSULATE_LABELS[c]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-2">
+              Vize Türü
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {VISA_TYPES.map((v) => (
+                <button
+                  key={v}
+                  onClick={() => toggleVisaType(v)}
+                  className={`px-3 py-1.5 text-xs rounded-full border transition-all ${
+                    filter.visaTypes.includes(v)
+                      ? 'bg-indigo-500/20 border-indigo-500/40 text-accent-text'
+                      : 'bg-input border-input-border text-muted hover:border-muted'
+                  }`}
+                >
+                  {VISA_TYPE_LABELS[v]}
                 </button>
               ))}
             </div>

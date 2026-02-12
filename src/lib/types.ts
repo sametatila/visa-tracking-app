@@ -1,6 +1,6 @@
 export type Consulate = 'Istanbul' | 'Ankara' | 'Izmir' | 'Diğer';
 
-export type VisaType = '36F' | '40F' | '41F' | '44F' | 'Diğer';
+export type VisaType = '36F' | '39F' | '40F' | '41F' | '44F' | 'Diğer';
 
 export interface RawRow {
   id: string;
@@ -38,6 +38,7 @@ export interface DerivedRow extends RawRow {
 
 export interface FilterState {
   consulates: Consulate[];
+  visaTypes: VisaType[];
   deCity: string;
   appointmentMonthFrom: string;
   appointmentMonthTo: string;

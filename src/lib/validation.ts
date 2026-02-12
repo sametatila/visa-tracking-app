@@ -1,7 +1,7 @@
 import { Consulate, VisaType } from './types';
 
 const VALID_CONSULATES: Consulate[] = ['Istanbul', 'Ankara', 'Izmir', 'Diğer'];
-const VALID_VISA_TYPES: VisaType[] = ['36F', '40F', '41F', '44F', 'Diğer'];
+const VALID_VISA_TYPES: VisaType[] = ['36F', '39F', '40F', '41F', '44F', 'Diğer'];
 
 const MAX_LENGTHS: Record<string, number> = {
   name: 100,

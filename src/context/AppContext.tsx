@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
 import { AppState, FilterState, DerivedRow } from '@/lib/types';
-import { CONSULATES } from '@/lib/constants';
+import { CONSULATES, VISA_TYPES } from '@/lib/constants';
 
 function getDefaultFilter(): FilterState {
   const now = new Date();
@@ -12,6 +12,7 @@ function getDefaultFilter(): FilterState {
 
   return {
     consulates: [...CONSULATES],
+    visaTypes: [...VISA_TYPES],
     deCity: '',
     appointmentMonthFrom: fromMonth,
     appointmentMonthTo: toMonth,

@@ -6,6 +6,9 @@ export function filterToSearchParams(filter: FilterState): URLSearchParams {
   if (filter.consulates.length > 0) {
     params.set('consulates', filter.consulates.join(','));
   }
+  if (filter.visaTypes.length > 0) {
+    params.set('visaTypes', filter.visaTypes.join(','));
+  }
   if (filter.deCity) {
     params.set('deCity', filter.deCity);
   }

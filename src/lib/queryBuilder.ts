@@ -1,10 +1,12 @@
 import { InValue } from '@libsql/client';
 
 const VALID_CONSULATES = new Set(['Istanbul', 'Ankara', 'Izmir', 'Diğer']);
+const VALID_VISA_TYPES = new Set(['36F', '39F', '40F', '41F', '44F', 'Diğer']);
 const MAX_CONSULATE_PARAMS = 10;
 
 export interface FilterParams {
   consulates: string[];
+  visaTypes: string[];
   deCity: string;
   appointmentMonthFrom: string;
   appointmentMonthTo: string;
@@ -37,6 +39,19 @@ export function buildFilterQuery(params: FilterParams): QueryFragment {
       const placeholders = validConsulates.map(() => '?').join(', ');
       conditions.push(`tr_consulate IN (${placeholders})`);
       args.push(...validConsulates);
+    }
+  }
+
+  // Visa types: whitelist doğrulama
+  if (params.visaTypes.length > 0) {
+    const validTypes = params.visaTypes
+      .filter((v) => VALID_VISA_TYPES.has(v))
+      .slice(0, MAX_CONSULATE_PARAMS);
+
+    if (validTypes.length > 0) {
+      const placeholders = validTypes.map(() => '?').join(', ');
+      conditions.push(`visa_type IN (${placeholders})`);
+      args.push(...validTypes);
     }
   }
 
@@ -78,9 +93,12 @@ export const ORDER_BY = `ORDER BY
 export function parseFilterSearchParams(searchParams: URLSearchParams): FilterParams {
   const consulatesRaw = searchParams.get('consulates') || '';
   const consulates = consulatesRaw ? consulatesRaw.split(',').filter(Boolean) : [];
+  const visaTypesRaw = searchParams.get('visaTypes') || '';
+  const visaTypes = visaTypesRaw ? visaTypesRaw.split(',').filter(Boolean) : [];
 
   return {
     consulates,
+    visaTypes,
     deCity: searchParams.get('deCity') || '',
     appointmentMonthFrom: searchParams.get('appointmentMonthFrom') || '',
     appointmentMonthTo: searchParams.get('appointmentMonthTo') || '',

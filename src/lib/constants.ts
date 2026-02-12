@@ -9,10 +9,11 @@ export const CONSULATE_LABELS: Record<Consulate, string> = {
   'Diğer': 'Diğer',
 };
 
-export const VISA_TYPES: VisaType[] = ['36F', '40F', '41F', '44F', 'Diğer'];
+export const VISA_TYPES: VisaType[] = ['36F', '39F', '40F', '41F', '44F', 'Diğer'];
 
 export const VISA_TYPE_LABELS: Record<VisaType, string> = {
   '36F': '36F',
+  '39F': '39F',
   '40F': '40F',
   '41F': '41F',
   '44F': '44F',
