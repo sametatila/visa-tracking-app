@@ -76,7 +76,10 @@ export default function DataTable({ rows, hasMore, loading, onLoadMore }: DataTa
                     {col.label}
                   </th>
                 ))}
-                <th className="px-3 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider min-w-[120px] w-[120px]">
+                <th
+                  className="px-3 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider min-w-[120px] w-[120px] cursor-help"
+                  title="Randevu tarihi ile karar e-postası veya SMS tarihlerinden ilki arasındaki gün farkı"
+                >
                   Durum
                 </th>
               </tr>
