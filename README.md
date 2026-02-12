@@ -117,6 +117,16 @@ scripts/
 - Cryptographic UUIDs for row IDs
 - Automatic daily database backups (7-day retention via GitHub Actions)
 
+## Backups
+
+The database is automatically backed up daily via GitHub Actions. Each backup is a full SQL dump stored as a GitHub Artifact with 7-day retention. To restore from a backup, download the artifact from the Actions tab, drop the existing table, and execute the SQL dump against your Turso database.
+
+Turso's free plan also includes automatic backups at every write transaction with 24-hour point-in-time recovery (PITR).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 ## License
 
 MIT
