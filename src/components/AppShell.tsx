@@ -102,6 +102,10 @@ function AppContent() {
           </div>
         </div>
 
+        <p className="text-xs text-muted leading-relaxed">
+          Bu sayfa, 36f Almanya Öğrenci Vizesi Telegram grubu katılımcılarının gönüllü katkılarıyla oluşturulmuştur. Amaç, paylaşılan vize süreçleri üzerinden ortalama bekleme sürelerini ve istatistikleri görünür kılmaktır. Kişisel verilerin kaldırılması talep edildiğinde ilgili kayıtlar sorgusuz silinir. Herhangi bir ticari amaç güdülmemektedir. Grup yöneticilerine ve katkıda bulunan herkese teşekkürler.
+        </p>
+
         {state.deleteWarning && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
