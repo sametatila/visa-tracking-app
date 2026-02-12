@@ -28,11 +28,11 @@ function Card({
   accent?: string;
 }) {
   return (
-    <div className="group relative bg-[#1a1d27] rounded-2xl border border-[#2a2d3a] p-5 transition-all hover:border-[#3a3d4a] hover:-translate-y-0.5">
+    <div className="group relative bg-card rounded-2xl border border-card-border p-5 transition-all hover:border-input-border hover:-translate-y-0.5">
       {accent && (
         <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-b ${accent}`} />
       )}
-      <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest mb-3">
+      <h3 className="text-[11px] font-semibold text-muted uppercase tracking-widest mb-3">
         {title}
       </h3>
       {children}
@@ -43,18 +43,18 @@ function Card({
 function BigNumber({ value, unit, sub }: { value: string | number | null; unit?: string; sub?: string }) {
   return (
     <div>
-      <span className="text-2xl font-bold text-gray-100 tracking-tight">
+      <span className="text-2xl font-bold text-foreground tracking-tight">
         {value ?? '—'}
       </span>
-      {unit && <span className="text-sm text-gray-500 ml-1">{unit}</span>}
-      {sub && <span className="text-xs text-gray-500 ml-2">{sub}</span>}
+      {unit && <span className="text-sm text-muted ml-1">{unit}</span>}
+      {sub && <span className="text-xs text-muted ml-2">{sub}</span>}
     </div>
   );
 }
 
 function CountBadge({ count }: { count: number }) {
   return (
-    <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium text-gray-500 bg-[#0f1117] rounded">
+    <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium text-muted bg-background rounded">
       {count} veri
     </span>
   );
@@ -66,12 +66,12 @@ export default function StatCards({ stats }: StatCardsProps) {
       <Card title="Veri Seti" accent="bg-blue-500">
         <div className="flex items-end gap-6">
           <div>
-            <div className="text-3xl font-extrabold text-gray-100">{stats.totalRows}</div>
-            <div className="text-[11px] text-gray-500 mt-0.5">toplam kayıt</div>
+            <div className="text-3xl font-extrabold text-foreground">{stats.totalRows}</div>
+            <div className="text-[11px] text-muted mt-0.5">toplam kayıt</div>
           </div>
           <div>
             <div className="text-3xl font-extrabold text-emerald-400">{stats.resultedRows}</div>
-            <div className="text-[11px] text-gray-500 mt-0.5">sonuçlanan</div>
+            <div className="text-[11px] text-muted mt-0.5">sonuçlanan</div>
           </div>
         </div>
       </Card>
@@ -82,7 +82,7 @@ export default function StatCards({ stats }: StatCardsProps) {
           unit="gün ort."
           sub={`${stats.appointmentToResult.count} veri`}
         />
-        <div className="mt-2 flex gap-3 text-xs text-gray-500">
+        <div className="mt-2 flex gap-3 text-xs text-muted">
           <span>P25–P75: {stats.appointmentToResult.p25 ?? '—'}–{stats.appointmentToResult.p75 ?? '—'}</span>
           <span>Min–Maks: {stats.appointmentToResult.min ?? '—'}–{stats.appointmentToResult.max ?? '—'}</span>
         </div>
@@ -108,15 +108,15 @@ export default function StatCards({ stats }: StatCardsProps) {
         <div className="space-y-2">
           {stats.consulateStats.map((cs) => (
             <div key={cs.consulate} className="flex items-center justify-between">
-              <span className="text-sm text-gray-400">{CONSULATE_LABELS[cs.consulate]}</span>
+              <span className="text-sm text-muted">{CONSULATE_LABELS[cs.consulate]}</span>
               <div className="flex items-center gap-2">
                 {cs.average !== null ? (
                   <>
-                    <span className="text-sm font-semibold text-gray-200">{cs.average} gün</span>
+                    <span className="text-sm font-semibold text-secondary">{cs.average} gün</span>
                     <CountBadge count={cs.count} />
                   </>
                 ) : (
-                  <span className="text-sm text-gray-600">—</span>
+                  <span className="text-sm text-faint">—</span>
                 )}
               </div>
             </div>
@@ -129,16 +129,16 @@ export default function StatCards({ stats }: StatCardsProps) {
           <div className="space-y-1.5">
             {stats.periodStats.map((p) => (
               <div key={p.period} className="flex justify-between items-center py-0.5">
-                <span className="text-sm text-gray-400">{formatPeriodTR(p.period)}</span>
+                <span className="text-sm text-muted">{formatPeriodTR(p.period)}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-200">{p.average} gün</span>
+                  <span className="text-sm font-semibold text-secondary">{p.average} gün</span>
                   <CountBadge count={p.count} />
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-sm text-gray-600">Yeterli veri yok</div>
+          <div className="text-sm text-faint">Yeterli veri yok</div>
         )}
       </Card>
 
@@ -147,50 +147,50 @@ export default function StatCards({ stats }: StatCardsProps) {
           <div className="space-y-1.5">
             {stats.cityStats.map((cs) => (
               <div key={cs.city} className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">{cs.city}</span>
+                <span className="text-sm text-muted">{cs.city}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-200">{cs.average} gün</span>
+                  <span className="text-sm font-semibold text-secondary">{cs.average} gün</span>
                   <CountBadge count={cs.count} />
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-sm text-gray-600">Yeterli veri yok</div>
+          <div className="text-sm text-faint">Yeterli veri yok</div>
         )}
       </Card>
 
       <Card title="Eksik Evrak Etkisi">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Eksik evrak yok</span>
+            <span className="text-sm text-muted">Eksik evrak yok</span>
             <div className="flex items-center gap-2">
               {stats.missingDocsEffect.avgWithout !== null ? (
                 <>
-                  <span className="text-sm font-semibold text-gray-200">{stats.missingDocsEffect.avgWithout} gün</span>
+                  <span className="text-sm font-semibold text-secondary">{stats.missingDocsEffect.avgWithout} gün</span>
                   <CountBadge count={stats.missingDocsEffect.countWithout} />
                 </>
               ) : (
-                <span className="text-sm text-gray-600">—</span>
+                <span className="text-sm text-faint">—</span>
               )}
             </div>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Eksik evrak var</span>
+            <span className="text-sm text-muted">Eksik evrak var</span>
             <div className="flex items-center gap-2">
               {stats.missingDocsEffect.avgWith !== null ? (
                 <>
-                  <span className="text-sm font-semibold text-gray-200">{stats.missingDocsEffect.avgWith} gün</span>
+                  <span className="text-sm font-semibold text-secondary">{stats.missingDocsEffect.avgWith} gün</span>
                   <CountBadge count={stats.missingDocsEffect.countWith} />
                 </>
               ) : (
-                <span className="text-sm text-gray-600">—</span>
+                <span className="text-sm text-faint">—</span>
               )}
             </div>
           </div>
           {stats.missingDocsEffect.delta !== null && (
-            <div className="pt-2 border-t border-[#2a2d3a]">
-              <span className={`text-sm font-bold ${stats.missingDocsEffect.delta > 0 ? 'text-red-400' : stats.missingDocsEffect.delta < 0 ? 'text-emerald-400' : 'text-gray-500'}`}>
+            <div className="pt-2 border-t border-card-border">
+              <span className={`text-sm font-bold ${stats.missingDocsEffect.delta > 0 ? 'text-red-400' : stats.missingDocsEffect.delta < 0 ? 'text-emerald-400' : 'text-muted'}`}>
                 {stats.missingDocsEffect.delta > 0 ? '+' : ''}{stats.missingDocsEffect.delta} gün fark
               </span>
             </div>

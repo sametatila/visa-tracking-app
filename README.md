@@ -11,6 +11,9 @@ A community-driven German student visa application tracker built for a ~2300-mem
 ## Features
 
 - Shared real-time data — all users see the same dataset
+- Live reload — automatic background refresh every 15s with idle detection
+- Active visitors — real-time count of online users
+- Dark/light mode — theme toggle with system preference support, no flash (FOIT prevention)
 - Inline editing — click any cell to update
 - Infinite scroll — paginated table loading (200 rows/page)
 - Statistics dashboard — processing time averages, consulate breakdowns, city stats
@@ -18,6 +21,8 @@ A community-driven German student visa application tracker built for a ~2300-mem
 - CSV/JSON import & export
 - Automatic name masking for privacy
 - IP-based rate limiting, input validation, security headers
+- Delete protection — progressive warning + permanent restriction for abuse
+- Data preservation — resolved rows older than 60 days cannot be deleted
 
 ## Getting Started
 
@@ -67,6 +72,8 @@ src/
     api/rows/[id]/      # PUT + DELETE
     api/rows/stats/     # GET (all filtered rows for statistics)
     page.tsx            # Main page
+  app/
+    banned/             # Restricted access page
   components/
     AppShell.tsx        # Main orchestrator (fetch, filter, state)
     DataTable.tsx       # Table with infinite scroll
@@ -74,15 +81,21 @@ src/
     AddRowModal.tsx     # New entry form
     FilterBar.tsx       # Filter controls
     StatCards.tsx       # Statistics dashboard
+    TopBar.tsx          # Theme toggle button
+    LiveReloadIndicator.tsx  # Live reload status indicator
   context/
     AppContext.tsx      # Global state (useReducer)
+    ThemeContext.tsx    # Dark/light theme management
   hooks/
     useRowsAPI.ts       # API communication hook
+    useLiveReload.ts    # Auto-refresh with idle detection
   lib/
     db.ts               # Turso client singleton
     queryBuilder.ts     # SQL filter builder
     validation.ts       # Server-side input validation
     rateLimit.ts        # IP-based rate limiter
+    ipBan.ts            # Delete abuse detection & IP restriction
+    activeVisitors.ts   # In-memory visitor counter
     derivation.ts       # RawRow -> DerivedRow computation
     statistics.ts       # Stats computation
     types.ts            # TypeScript interfaces
@@ -111,6 +124,8 @@ scripts/
 ## Security
 
 - Rate limiting: 60 reads/min, 10 writes/min per IP
+- Delete protection: 2 deletes in 5min → warning, 1 more → permanent IP restriction (stored in DB)
+- Data preservation: resolved rows (with decision email/SMS) older than 60 days are undeletable
 - Input validation: length limits, date format checks, whitelist validation
 - Parameterized SQL queries (no SQL injection)
 - Security headers: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy

@@ -47,16 +47,17 @@ export function buildFilterQuery(params: FilterParams): QueryFragment {
     args.push(`%${safeCity}%`);
   }
 
+  // Randevu dönemi filtresi: boş randevu tarihli kayıtlar her zaman dahil edilir
   if (params.appointmentMonthFrom) {
     conditions.push(
-      `appointment_date != '' AND SUBSTR(appointment_date, 7, 4) || '-' || SUBSTR(appointment_date, 4, 2) >= ?`
+      `(appointment_date = '' OR SUBSTR(appointment_date, 7, 4) || '-' || SUBSTR(appointment_date, 4, 2) >= ?)`
     );
     args.push(params.appointmentMonthFrom);
   }
 
   if (params.appointmentMonthTo) {
     conditions.push(
-      `appointment_date != '' AND SUBSTR(appointment_date, 7, 4) || '-' || SUBSTR(appointment_date, 4, 2) <= ?`
+      `(appointment_date = '' OR SUBSTR(appointment_date, 7, 4) || '-' || SUBSTR(appointment_date, 4, 2) <= ?)`
     );
     args.push(params.appointmentMonthTo);
   }
@@ -70,7 +71,7 @@ export function buildFilterQuery(params: FilterParams): QueryFragment {
 }
 
 export const ORDER_BY = `ORDER BY
-  CASE WHEN appointment_date = '' THEN 1 ELSE 0 END,
+  CASE WHEN appointment_date = '' THEN 0 ELSE 1 END,
   SUBSTR(appointment_date, 7, 4) || '-' || SUBSTR(appointment_date, 4, 2) || '-' || SUBSTR(appointment_date, 1, 2) DESC,
   created_at DESC`;
 

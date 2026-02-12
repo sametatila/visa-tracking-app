@@ -58,6 +58,8 @@ export interface AppState {
   totalUnfiltered: number;
   mutating: boolean;
   error: string | null;
+  deleteWarning: string | null;
+  activeVisitors: number;
 }
 
 export interface ConsulateStats {

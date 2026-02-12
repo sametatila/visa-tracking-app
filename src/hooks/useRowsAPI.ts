@@ -11,6 +11,7 @@ const PAGE_LIMIT = 200;
 export function useRowsAPI() {
   const { state, dispatch } = useApp();
   const abortRef = useRef<AbortController | null>(null);
+  const bgAbortRef = useRef<AbortController | null>(null);
 
   const fetchTablePage = useCallback(
     async (page: number, append: boolean = false) => {
@@ -26,6 +27,10 @@ export function useRowsAPI() {
 
         const data = await res.json();
         const derived = deriveAllRows(data.rows as RawRow[]);
+
+        if (typeof data.activeVisitors === 'number') {
+          dispatch({ type: 'SET_ACTIVE_VISITORS', count: data.activeVisitors });
+        }
 
         if (append) {
           dispatch({
@@ -159,6 +164,22 @@ export function useRowsAPI() {
           throw new Error(err.error || 'Kayıt silinemedi');
         }
 
+        const data = await res.json();
+
+        // Ban → sayfa yenile (middleware ban'ı yakalar)
+        if (data.restricted) {
+          window.location.reload();
+          return;
+        }
+
+        // Uyarı → banner göster
+        if (data.deleteWarning) {
+          dispatch({
+            type: 'SET_DELETE_WARNING',
+            warning: 'Çok fazla silme işlemi yapıyorsunuz. Devam ederseniz erişiminiz kalıcı olarak kısıtlanabilir.',
+          });
+        }
+
         dispatch({ type: 'SET_MUTATING', mutating: false });
         await fetchAll();
       } catch (err) {
@@ -169,6 +190,60 @@ export function useRowsAPI() {
     [dispatch, fetchAll]
   );
 
+  const refreshInBackground = useCallback(async () => {
+    // Mutation veya aktif yükleme sırasında çalışma
+    if (state.mutating || state.tableLoading) return;
+
+    // Önceki arka plan isteğini iptal et
+    if (bgAbortRef.current) {
+      bgAbortRef.current.abort();
+    }
+    bgAbortRef.current = new AbortController();
+    const signal = bgAbortRef.current.signal;
+
+    try {
+      const totalRows = Math.max(state.tablePage * PAGE_LIMIT, PAGE_LIMIT);
+      const params = filterToSearchParams(state.filterState);
+      params.set('page', '1');
+      params.set('limit', String(totalRows));
+
+      const [tableRes, statsRes] = await Promise.all([
+        fetch(`/api/rows?${params.toString()}`, { signal }),
+        fetch(`/api/rows/stats?${params.toString()}`, { signal }),
+      ]);
+
+      if (signal.aborted) return;
+
+      if (tableRes.ok) {
+        const tableData = await tableRes.json();
+        const derived = deriveAllRows(tableData.rows as RawRow[]);
+        if (typeof tableData.activeVisitors === 'number') {
+          dispatch({ type: 'SET_ACTIVE_VISITORS', count: tableData.activeVisitors });
+        }
+        dispatch({
+          type: 'SET_TABLE_PAGE',
+          rows: derived,
+          page: tableData.page,
+          hasMore: tableData.hasMore,
+          totalFiltered: tableData.totalCount,
+        });
+      }
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        const derived = deriveAllRows(statsData.rows as RawRow[]);
+        dispatch({
+          type: 'SET_STATS',
+          rows: derived,
+          totalUnfiltered: statsData.totalUnfiltered,
+          totalFiltered: derived.length,
+        });
+      }
+    } catch {
+      // Arka plan yenilemede hata sessizce yoksayılır
+    }
+  }, [state.mutating, state.tableLoading, state.tablePage, state.filterState, dispatch]);
+
   return {
     fetchAll,
     fetchTablePage,
@@ -177,5 +252,6 @@ export function useRowsAPI() {
     updateRow,
     deleteRow,
     loadMore,
+    refreshInBackground,
   };
 }

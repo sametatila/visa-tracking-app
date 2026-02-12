@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, KeyboardEvent } from 'react';
 import { DerivedRow, ColumnDef, ColumnKey } from '@/lib/types';
 import { COLUMNS, CONSULATES, CONSULATE_LABELS, GERMAN_CITIES, VISA_TYPES, VISA_TYPE_LABELS } from '@/lib/constants';
-import { validateDateOrder, validateDateFormat, DATE_ORDER } from '@/lib/dateUtils';
+import { validateDateOrder, validateDateFormat, DATE_ORDER, parseDDMMYYYY } from '@/lib/dateUtils';
 import { useRowsAPI } from '@/hooks/useRowsAPI';
 
 interface TableRowProps {
@@ -167,7 +167,7 @@ export default function TableRow({ row }: TableRowProps) {
           onChange={(e) => handleSelectChange(col, e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-full px-1.5 py-1 text-sm bg-[#1e2130] border border-indigo-500/50 rounded-lg text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-1.5 py-1 text-sm bg-input border border-indigo-500/50 rounded-lg text-secondary focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
           {CONSULATES.map((c) => (
             <option key={c} value={c}>{CONSULATE_LABELS[c]}</option>
@@ -184,7 +184,7 @@ export default function TableRow({ row }: TableRowProps) {
           onChange={(e) => handleSelectChange(col, e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-full px-1.5 py-1 text-sm bg-[#1e2130] border border-indigo-500/50 rounded-lg text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-1.5 py-1 text-sm bg-input border border-indigo-500/50 rounded-lg text-secondary focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
           <option value="">Seçiniz...</option>
           {GERMAN_CITIES.map((city) => (
@@ -202,7 +202,7 @@ export default function TableRow({ row }: TableRowProps) {
           onChange={(e) => handleSelectChange(col, e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-full px-1.5 py-1 text-sm bg-[#1e2130] border border-indigo-500/50 rounded-lg text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-1.5 py-1 text-sm bg-input border border-indigo-500/50 rounded-lg text-secondary focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
           {VISA_TYPES.map((vt) => (
             <option key={vt} value={vt}>{VISA_TYPE_LABELS[vt]}</option>
@@ -226,7 +226,7 @@ export default function TableRow({ row }: TableRowProps) {
             }}
             onBlur={commitEdit}
             onKeyDown={handleKeyDown}
-            className={`w-full px-1.5 py-1 text-sm bg-[#1e2130] border rounded-lg text-gray-200 focus:outline-none focus:ring-1 ${validationMsg ? 'border-red-500/50 focus:ring-red-500' : 'border-indigo-500/50 focus:ring-indigo-500'}`}
+            className={`w-full px-1.5 py-1 text-sm bg-input border rounded-lg text-secondary focus:outline-none focus:ring-1 ${validationMsg ? 'border-red-500/50 focus:ring-red-500' : 'border-indigo-500/50 focus:ring-indigo-500'}`}
             placeholder="GG.AA.YYYY"
           />
           {validationMsg && (
@@ -245,7 +245,7 @@ export default function TableRow({ row }: TableRowProps) {
           onChange={(e) => setDraftValue(e.target.value)}
           onBlur={commitEdit}
           onKeyDown={handleKeyDown}
-          className="w-full px-1.5 py-1 text-sm bg-[#1e2130] border border-indigo-500/50 rounded-lg text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-1.5 py-1 text-sm bg-input border border-indigo-500/50 rounded-lg text-secondary focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
         {validationMsg && (
           <div className="text-[10px] text-red-400 mt-0.5 whitespace-normal">{validationMsg}</div>
@@ -257,16 +257,24 @@ export default function TableRow({ row }: TableRowProps) {
   const hasResult = row.decision_email_date.trim() !== '' || row.sms_date.trim() !== '';
   const hasMissingDocsNoResult = row.missing_docs.trim() !== '' && !hasResult;
 
+  const isDeleteProtected = (() => {
+    if (!hasResult) return false;
+    const appt = parseDDMMYYYY(row.appointment_date);
+    if (!appt) return false;
+    const daysSince = Math.floor((Date.now() - appt.getTime()) / (1000 * 60 * 60 * 24));
+    return daysSince > 60;
+  })();
+
   const rowBg = hasResult
     ? 'bg-emerald-500/10 hover:bg-emerald-500/15'
     : hasMissingDocsNoResult
       ? 'bg-amber-500/10 hover:bg-amber-500/15'
-      : 'hover:bg-[#1e2130]';
+      : 'hover:bg-input';
 
   const resultDays = row.appointment_to_result_days;
 
   return (
-    <tr className={`border-b border-[#2a2d3a] transition-colors ${rowBg} ${saving ? 'opacity-60' : ''}`}>
+    <tr className={`border-b border-card-border transition-colors ${rowBg} ${saving ? 'opacity-60' : ''}`}>
       {COLUMNS.map((col) => {
         const isEditing = editingField === col.key;
         let displayValue = row[col.key] as string;
@@ -288,8 +296,8 @@ export default function TableRow({ row }: TableRowProps) {
             {isEditing ? (
               renderEditField(col)
             ) : (
-              <span className="cursor-pointer block truncate text-gray-300" title={row[col.key] as string}>
-                {displayValue || <span className="text-gray-600">—</span>}
+              <span className="cursor-pointer block truncate text-secondary" title={row[col.key] as string}>
+                {displayValue || <span className="text-faint">—</span>}
               </span>
             )}
           </td>
@@ -314,7 +322,16 @@ export default function TableRow({ row }: TableRowProps) {
             </span>
           )}
           {badges}
-          {confirmingDelete ? (
+          {isDeleteProtected ? (
+            <span
+              className="ml-auto p-1 text-disabled cursor-not-allowed"
+              title="Bu kayıt sonuçlanmış ve 60 günden eski olduğu için silinemez"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+                <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+              </svg>
+            </span>
+          ) : confirmingDelete ? (
             <div className="ml-auto flex items-center gap-1">
               <button
                 onClick={handleDelete}
@@ -326,7 +343,7 @@ export default function TableRow({ row }: TableRowProps) {
               </button>
               <button
                 onClick={() => setConfirmingDelete(false)}
-                className="px-1.5 py-0.5 text-[10px] font-medium text-gray-400 hover:text-gray-200 hover:bg-[#2a2d3a] rounded-lg transition-colors"
+                className="px-1.5 py-0.5 text-[10px] font-medium text-muted hover:text-secondary hover:bg-card-border rounded-lg transition-colors"
                 title="İptal"
               >
                 İptal
@@ -336,7 +353,7 @@ export default function TableRow({ row }: TableRowProps) {
             <button
               onClick={handleDelete}
               disabled={saving}
-              className="ml-auto p-1 text-gray-600 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10 disabled:opacity-50"
+              className="ml-auto p-1 text-faint hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10 disabled:opacity-50"
               title="Satırı sil"
               aria-label="Satırı sil"
             >

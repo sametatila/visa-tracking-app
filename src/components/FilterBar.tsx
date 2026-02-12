@@ -83,35 +83,35 @@ function MonthPicker({
       <button
         type="button"
         onClick={handleOpen}
-        className="w-full px-2.5 py-2 text-xs text-left bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all flex items-center justify-between gap-1"
+        className="w-full px-2.5 py-2 text-xs text-left bg-input border border-input-border text-secondary rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all flex items-center justify-between gap-1"
       >
-        <span className={value ? 'text-gray-200' : 'text-gray-600'}>
+        <span className={value ? 'text-secondary' : 'text-faint'}>
           {value ? formatLabel(value) : placeholder}
         </span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-gray-500 flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-muted flex-shrink-0">
           <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clipRule="evenodd" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-56 bg-[#1a1d27] border border-[#363a4a] rounded-xl shadow-xl p-3">
+        <div className="absolute z-50 mt-1 w-56 bg-card border border-input-border rounded-xl shadow-xl p-3">
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"
               onClick={() => setViewYear((y) => Math.max(minYear, y - 1))}
               disabled={viewYear <= minYear}
-              className="p-1 text-gray-400 hover:text-gray-200 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors"
+              className="p-1 text-muted hover:text-secondary disabled:text-disabled disabled:cursor-not-allowed transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                 <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
               </svg>
             </button>
-            <span className="text-sm font-semibold text-gray-200">{viewYear}</span>
+            <span className="text-sm font-semibold text-secondary">{viewYear}</span>
             <button
               type="button"
               onClick={() => setViewYear((y) => Math.min(maxYear, y + 1))}
               disabled={viewYear >= maxYear}
-              className="p-1 text-gray-400 hover:text-gray-200 disabled:text-gray-700 disabled:cursor-not-allowed transition-colors"
+              className="p-1 text-muted hover:text-secondary disabled:text-disabled disabled:cursor-not-allowed transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                 <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
@@ -136,8 +136,8 @@ function MonthPicker({
                     selected
                       ? 'bg-indigo-500 text-white font-semibold'
                       : disabled
-                        ? 'text-gray-700 cursor-not-allowed'
-                        : 'text-gray-400 hover:bg-[#2a2d3a] hover:text-gray-200'
+                        ? 'text-disabled cursor-not-allowed'
+                        : 'text-muted hover:bg-card-border hover:text-secondary'
                   }`}
                 >
                   {name}
@@ -152,7 +152,7 @@ function MonthPicker({
                 onChange('');
                 setOpen(false);
               }}
-              className="w-full mt-2 px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 hover:bg-[#2a2d3a] rounded-lg transition-colors text-center"
+              className="w-full mt-2 px-2 py-1 text-[11px] text-muted hover:text-secondary hover:bg-card-border rounded-lg transition-colors text-center"
             >
               Temizle
             </button>
@@ -193,10 +193,10 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
   };
 
   return (
-    <div className="bg-[#1a1d27] rounded-2xl border border-[#2a2d3a]">
+    <div className="bg-card rounded-2xl border border-card-border">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-5 py-3.5 flex items-center justify-between sm:hidden text-sm font-medium text-gray-300"
+        className="w-full px-5 py-3.5 flex items-center justify-between sm:hidden text-sm font-medium text-secondary"
       >
         Filtreler
         <svg
@@ -216,7 +216,7 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
       <div className={`p-5 ${expanded ? 'block' : 'hidden'} sm:block`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <span className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <span className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-2">
               Konsolosluk
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -226,8 +226,8 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
                   onClick={() => toggleConsulate(c)}
                   className={`px-3 py-1.5 text-xs rounded-full border transition-all ${
                     filter.consulates.includes(c)
-                      ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
-                      : 'bg-[#1e2130] border-[#363a4a] text-gray-500 hover:border-gray-500'
+                      ? 'bg-indigo-500/20 border-indigo-500/40 text-accent-text'
+                      : 'bg-input border-input-border text-muted hover:border-muted'
                   }`}
                 >
                   {CONSULATE_LABELS[c]}
@@ -239,7 +239,7 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
           <div>
             <label
               htmlFor="deCity"
-              className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5"
+              className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1.5"
             >
               Almanya Şehri
             </label>
@@ -249,12 +249,12 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
               value={filter.deCity}
               onChange={(e) => onFilterChange({ deCity: e.target.value })}
               placeholder="Şehir..."
-              className="w-full px-3.5 py-2 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+              className="w-full px-3.5 py-2 text-sm bg-input border border-input-border text-secondary rounded-xl placeholder-faint focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
             />
           </div>
 
           <div>
-            <span className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            <span className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1.5">
               Randevu Dönemi
             </span>
             <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
                   maxValue={filter.appointmentMonthTo || undefined}
                 />
               </div>
-              <span className="text-gray-600 text-xs">–</span>
+              <span className="text-faint text-xs">–</span>
               <div className="flex-1">
                 <MonthPicker
                   value={filter.appointmentMonthTo}
@@ -279,7 +279,7 @@ export default function FilterBar({ filter, onFilterChange }: FilterBarProps) {
           </div>
 
           <div>
-            <span className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <span className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-2">
               &nbsp;
             </span>
             <div className="space-y-2.5">
@@ -321,7 +321,7 @@ function Toggle({
         />
         <div
           className={`w-8 h-[18px] rounded-full transition-colors ${
-            checked ? 'bg-indigo-500' : 'bg-[#363a4a] group-hover:bg-[#4a4e5e]'
+            checked ? 'bg-indigo-500' : 'bg-input-border group-hover:bg-muted'
           }`}
         >
           <div
@@ -331,7 +331,7 @@ function Toggle({
           />
         </div>
       </div>
-      <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">{label}</span>
+      <span className="text-xs text-muted group-hover:text-secondary transition-colors">{label}</span>
     </label>
   );
 }

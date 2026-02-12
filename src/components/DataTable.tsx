@@ -5,6 +5,7 @@ import { DerivedRow } from '@/lib/types';
 import { COLUMNS } from '@/lib/constants';
 import TableRow from './TableRow';
 import AddRowModal from './AddRowModal';
+import Spinner from './Spinner';
 
 interface DataTableProps {
   rows: DerivedRow[];
@@ -47,9 +48,9 @@ export default function DataTable({ rows, hasMore, loading, onLoadMore }: DataTa
   }, [hasMore, loading, handleLoadMore]);
 
   return (
-    <div className="bg-[#1a1d27] rounded-2xl border border-[#2a2d3a] overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-[#2a2d3a] flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-500">
+    <div className="bg-card rounded-2xl border border-card-border overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-card-border flex items-center justify-between">
+        <span className="text-sm font-medium text-muted">
           {rows.length} satır gösteriliyor
         </span>
         <button
@@ -66,16 +67,16 @@ export default function DataTable({ rows, hasMore, loading, onLoadMore }: DataTa
         <div ref={scrollContainerRef} className="max-h-[720px] overflow-y-auto">
           <table className="w-full min-w-[1280px]">
             <thead className="sticky top-0 z-10">
-              <tr className="bg-[#151821] border-b border-[#2a2d3a]">
+              <tr className="bg-elevated border-b border-card-border">
                 {COLUMNS.map((col) => (
                   <th
                     key={col.key}
-                    className={`px-3 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider ${col.width}`}
+                    className={`px-3 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider ${col.width}`}
                   >
                     {col.label}
                   </th>
                 ))}
-                <th className="px-3 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider min-w-[120px] w-[120px]">
+                <th className="px-3 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider min-w-[120px] w-[120px]">
                   Durum
                 </th>
               </tr>
@@ -86,10 +87,8 @@ export default function DataTable({ rows, hasMore, loading, onLoadMore }: DataTa
               ))}
               {hasMore && (
                 <tr ref={sentinelRef}>
-                  <td colSpan={COLUMNS.length + 1} className="py-4 text-center">
-                    {loading && (
-                      <span className="text-sm text-gray-500 animate-pulse">Yükleniyor...</span>
-                    )}
+                  <td colSpan={COLUMNS.length + 1} className="py-4">
+                    {loading && <Spinner size="sm" label="Yükleniyor..." />}
                   </td>
                 </tr>
               )}
@@ -98,7 +97,7 @@ export default function DataTable({ rows, hasMore, loading, onLoadMore }: DataTa
         </div>
       </div>
       {rows.length === 0 && !loading && (
-        <div className="py-16 text-center text-gray-600">
+        <div className="py-16 text-center text-faint">
           Gösterilecek veri yok. Yeni kayıt ekleyin veya filtrelerinizi değiştirin.
         </div>
       )}

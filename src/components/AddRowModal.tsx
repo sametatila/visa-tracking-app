@@ -6,6 +6,7 @@ import { CONSULATES, CONSULATE_LABELS, GERMAN_CITIES, VISA_TYPES, VISA_TYPE_LABE
 import { maskName } from '@/lib/maskUtils';
 import { validateDateOrder, validateDateFormat } from '@/lib/dateUtils';
 import { useRowsAPI } from '@/hooks/useRowsAPI';
+import Spinner from './Spinner';
 
 interface AddRowModalProps {
   onClose: () => void;
@@ -112,12 +113,12 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
       onClick={handleBackdropClick}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
     >
-      <div className="bg-[#1a1d27] rounded-2xl shadow-2xl border border-[#2a2d3a] w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2d3a]">
-          <h2 className="text-lg font-semibold text-gray-100">Yeni Kayıt Ekle</h2>
+      <div className="bg-card rounded-2xl shadow-2xl border border-card-border w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-card-border flex-shrink-0">
+          <h2 className="text-lg font-semibold text-foreground">Yeni Kayıt Ekle</h2>
           <button
             onClick={onClose}
-            className="p-1.5 text-gray-500 hover:text-gray-300 hover:bg-[#2a2d3a] rounded-lg transition-colors"
+            className="p-1.5 text-muted hover:text-secondary hover:bg-card-border rounded-lg transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
               <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -125,7 +126,7 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
           </button>
         </div>
 
-        <div className="px-6 py-5 space-y-4">
+        <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1 min-h-0">
           {errors.length > 0 && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 space-y-1">
               {errors.map((err, i) => (
@@ -135,7 +136,7 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
               Kullanıcı Adı <span className="text-red-400">*</span>
             </label>
             <input
@@ -143,11 +144,11 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Adı giriniz (otomatik maskelenecek)"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl placeholder-faint focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
               autoFocus
             />
             {name && (
-              <span className="text-[11px] text-gray-500 mt-1 block">
+              <span className="text-[11px] text-muted mt-1 block">
                 Maskeli: {maskName(name)}
               </span>
             )}
@@ -155,13 +156,13 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
                 Konsolosluk <span className="text-red-400">*</span>
               </label>
               <select
                 value={consulate}
                 onChange={(e) => setConsulate(e.target.value as Consulate)}
-                className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
               >
                 {CONSULATES.map((c) => (
                   <option key={c} value={c}>{CONSULATE_LABELS[c]}</option>
@@ -169,11 +170,11 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Vize Türü</label>
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Vize Türü</label>
               <select
                 value={visaType}
                 onChange={(e) => setVisaType(e.target.value as VisaType)}
-                className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
               >
                 {VISA_TYPES.map((vt) => (
                   <option key={vt} value={vt}>{VISA_TYPE_LABELS[vt]}</option>
@@ -183,11 +184,11 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Almanya Şehri</label>
+            <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Almanya Şehri</label>
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
             >
               <option value="">Seçiniz...</option>
               {GERMAN_CITIES.map((c) => (
@@ -196,10 +197,10 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
             </select>
           </div>
 
-          <div className="bg-[#1e2130] border border-[#363a4a] rounded-xl p-3">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <div className="bg-input border border-input-border rounded-xl p-3">
+            <div className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-2">
               Tarihler <span className="text-red-400">*</span>
-              <span className="normal-case text-gray-600 ml-1">(en az biri zorunlu, sıralama önemli)</span>
+              <span className="normal-case text-faint ml-1">(en az biri zorunlu, sıralama önemli)</span>
             </div>
             <div className="space-y-3">
               <DateField label="Başvuru Tarihi" value={applicationDate} onChange={setApplicationDate} />
@@ -209,13 +210,13 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Eksik Evrak</label>
+            <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Eksik Evrak</label>
             <input
               type="text"
               value={missingDocs}
               onChange={(e) => setMissingDocs(e.target.value)}
               placeholder="Tarih veya tarih aralığı (ör: 01.01.2026, 05.01.2026-10.01.2026)"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl placeholder-faint focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
             />
           </div>
 
@@ -223,26 +224,26 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
           <DateField label="SMS Tarihi" value={smsDate} onChange={setSmsDate} />
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Kurs Başlangıcı</label>
+            <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Kurs Başlangıcı</label>
             <input
               type="text"
               value={courseStart}
               onChange={(e) => setCourseStart(e.target.value)}
               placeholder="GG.AA.YYYY veya aralık (ör: 05.01 => 16.02)"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border border-[#363a4a] text-gray-200 rounded-xl placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
+              className="w-full px-3.5 py-2.5 text-sm bg-input border border-input-border text-secondary rounded-xl placeholder-faint focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
             />
           </div>
 
-          <div className="text-[11px] text-gray-600 bg-[#0f1117] rounded-lg px-3 py-2">
+          <div className="text-[11px] text-faint bg-background rounded-lg px-3 py-2">
             Tarih sıralaması: Başvuru ≤ Atama ≤ Randevu ≤ Eksik Evrak ≤ Karar E-posta ≤ SMS. Sonraki tarih öncekinden erken olamaz.
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-[#2a2d3a] flex gap-3 justify-end">
+        <div className="px-6 py-4 border-t border-card-border flex gap-3 justify-end flex-shrink-0">
           <button
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-[#2a2d3a] rounded-xl transition-all disabled:opacity-50"
+            className="px-4 py-2.5 text-sm font-medium text-muted hover:text-secondary hover:bg-card-border rounded-xl transition-all disabled:opacity-50"
           >
             İptal
           </button>
@@ -251,7 +252,7 @@ export default function AddRowModal({ onClose }: AddRowModalProps) {
             disabled={submitting}
             className="px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-sm disabled:opacity-50"
           >
-            {submitting ? 'Ekleniyor...' : 'Ekle'}
+            {submitting ? <Spinner size="sm" label="Ekleniyor..." /> : 'Ekle'}
           </button>
         </div>
       </div>
@@ -279,13 +280,13 @@ function DateField({
 
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{label}</label>
+      <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">{label}</label>
       <input
         type="text"
         value={value}
         onChange={handleChange}
         placeholder="GG.AA.YYYY"
-        className={`w-full px-3.5 py-2.5 text-sm bg-[#1e2130] border text-gray-200 rounded-xl placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${error ? 'border-red-500/50 focus:ring-red-500/30 focus:border-red-500/50' : 'border-[#363a4a] focus:ring-indigo-500/30 focus:border-indigo-500/50'}`}
+        className={`w-full px-3.5 py-2.5 text-sm bg-input border text-secondary rounded-xl placeholder-faint focus:outline-none focus:ring-2 transition-all ${error ? 'border-red-500/50 focus:ring-red-500/30 focus:border-red-500/50' : 'border-input-border focus:ring-indigo-500/30 focus:border-indigo-500/50'}`}
       />
       {error && (
         <div className="text-[11px] text-red-400 mt-1">{error}</div>

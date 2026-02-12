@@ -2,25 +2,69 @@
 @source not "../../*.txt";
 @source not "../../*.jsonl";
 
+/* ── Dark theme (default) ── */
 :root {
-  --background: #0f1117;
-  --foreground: #e5e7eb;
-  --card-bg: #1a1d27;
-  --card-border: #2a2d3a;
-  --input-bg: #1e2130;
-  --input-border: #363a4a;
+  --bg-primary: #0f1117;
+  --bg-card: #1a1d27;
+  --bg-input: #1e2130;
+  --bg-elevated: #151821;
+  --border-primary: #2a2d3a;
+  --border-input: #363a4a;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --text-muted: #6b7280;
+  --text-faint: #4b5563;
+  --text-disabled: #374151;
+  --scrollbar-thumb: #363a4a;
+  --scrollbar-hover: #4a4e5e;
+  --calendar-icon: #4a4e5e;
+  --accent-text: #a5b4fc;
+  --focus-ring: #6366f1;
+  --color-scheme: dark;
+}
+
+/* ── Light theme ── */
+.light {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-elevated: #e2e8f0;
+  --border-primary: #e2e8f0;
+  --border-input: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --text-disabled: #cbd5e1;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-hover: #94a3b8;
+  --calendar-icon: #94a3b8;
+  --accent-text: #4f46e5;
+  --focus-ring: #6366f1;
+  --color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --color-card: var(--bg-card);
+  --color-card-border: var(--border-primary);
+  --color-input: var(--bg-input);
+  --color-input-border: var(--border-input);
+  --color-elevated: var(--bg-elevated);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-secondary: var(--text-secondary);
+  --color-disabled: var(--text-disabled);
+  --color-accent-text: var(--accent-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* Smooth scrollbar */
@@ -34,24 +78,24 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #363a4a;
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a4e5e;
+  background: var(--scrollbar-hover);
 }
 
 /* Focus ring */
 *:focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 /* Date input - combined text + calendar picker */
 .date-input {
-  color-scheme: dark;
+  color-scheme: var(--color-scheme);
   position: relative;
 }
 
@@ -76,5 +120,5 @@ body {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #4a4e5e;
+  color: var(--calendar-icon);
 }

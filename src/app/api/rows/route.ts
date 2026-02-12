@@ -5,9 +5,16 @@ import { buildFilterQuery, ORDER_BY, parseFilterSearchParams } from '@/lib/query
 import { maskName } from '@/lib/maskUtils';
 import { randomUUID } from 'crypto';
 import { validateRowInput, isValidConsulate, isValidVisaType, sanitizeString } from '@/lib/validation';
+import { recordVisitor, getActiveCount } from '@/lib/activeVisitors';
 
 export async function GET(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    if (ip !== 'unknown') recordVisitor(ip);
+
     const searchParams = request.nextUrl.searchParams;
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(500, Math.max(1, parseInt(searchParams.get('limit') || '200', 10)));
@@ -48,6 +55,7 @@ export async function GET(request: NextRequest) {
       totalCount,
       page,
       hasMore: offset + rows.length < totalCount,
+      activeVisitors: getActiveCount(),
     });
   } catch (error) {
     console.error('GET /api/rows error:', error instanceof Error ? error.message : 'Unknown error');

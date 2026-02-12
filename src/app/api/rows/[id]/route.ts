@@ -3,6 +3,8 @@ import db from '@/lib/db';
 import { RawRow, Consulate, VisaType, ColumnKey } from '@/lib/types';
 import { maskName } from '@/lib/maskUtils';
 import { sanitizeString, validateDateField, isValidConsulate, isValidVisaType, getMaxLength } from '@/lib/validation';
+import { recordDeleteAndCheck, isIPBanned } from '@/lib/ipBan';
+import { parseDDMMYYYY } from '@/lib/dateUtils';
 
 const EDITABLE_KEYS: ColumnKey[] = [
   'name', 'tr_consulate', 'de_city', 'visa_type',
@@ -106,6 +108,42 @@ export async function DELETE(
       return NextResponse.json({ error: 'Geçersiz ID.' }, { status: 400 });
     }
 
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+
+    // Silme öncesi ban kontrolü
+    if (ip !== 'unknown' && await isIPBanned(ip)) {
+      return NextResponse.json({ error: 'Erişim kısıtlandı.' }, { status: 403 });
+    }
+
+    // 60 gün koruma: sonuçlanmış eski satırlar silinemez (istatistik bütünlüğü)
+    const existing = await db.execute({
+      sql: 'SELECT appointment_date, decision_email_date, sms_date FROM rows WHERE id = ?',
+      args: [id],
+    });
+
+    if (existing.rows.length === 0) {
+      return NextResponse.json({ error: 'Kayıt bulunamadı.' }, { status: 404 });
+    }
+
+    const r = existing.rows[0];
+    const hasResult = !!((r.decision_email_date as string)?.trim()) || !!((r.sms_date as string)?.trim());
+
+    if (hasResult) {
+      const appointmentDate = parseDDMMYYYY((r.appointment_date as string) ?? '');
+      if (appointmentDate) {
+        const daysSince = Math.floor((Date.now() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSince > 60) {
+          return NextResponse.json(
+            { error: 'Bu kayıt sonuçlanmış ve 60 günden eski olduğu için silinemez.' },
+            { status: 403 }
+          );
+        }
+      }
+    }
+
     const result = await db.execute({
       sql: 'DELETE FROM rows WHERE id = ?',
       args: [id],
@@ -113,6 +151,19 @@ export async function DELETE(
 
     if (result.rowsAffected === 0) {
       return NextResponse.json({ error: 'Kayıt bulunamadı.' }, { status: 404 });
+    }
+
+    // Silme sonrası sayacı kontrol et
+    if (ip !== 'unknown') {
+      const status = await recordDeleteAndCheck(ip);
+
+      if (status === 'ban') {
+        return NextResponse.json({ success: true, restricted: true });
+      }
+
+      if (status === 'warn') {
+        return NextResponse.json({ success: true, deleteWarning: true });
+      }
     }
 
     return NextResponse.json({ success: true });

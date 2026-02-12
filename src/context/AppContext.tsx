@@ -33,6 +33,8 @@ const DEFAULT_STATE: AppState = {
   totalUnfiltered: 0,
   mutating: false,
   error: null,
+  deleteWarning: null,
+  activeVisitors: 0,
 };
 
 export type Action =
@@ -44,6 +46,8 @@ export type Action =
   | { type: 'SET_STATS_LOADING'; loading: boolean }
   | { type: 'SET_MUTATING'; mutating: boolean }
   | { type: 'SET_ERROR'; error: string | null }
+  | { type: 'SET_DELETE_WARNING'; warning: string | null }
+  | { type: 'SET_ACTIVE_VISITORS'; count: number }
   | { type: 'RESET_TABLE' };
 
 function reducer(state: AppState, action: Action): AppState {
@@ -64,14 +68,17 @@ function reducer(state: AppState, action: Action): AppState {
         tableLoading: false,
       };
 
-    case 'APPEND_TABLE_PAGE':
+    case 'APPEND_TABLE_PAGE': {
+      const existingIds = new Set(state.tableRows.map((r) => r.id));
+      const uniqueNew = action.rows.filter((r) => !existingIds.has(r.id));
       return {
         ...state,
-        tableRows: [...state.tableRows, ...action.rows],
+        tableRows: [...state.tableRows, ...uniqueNew],
         tablePage: action.page,
         tableHasMore: action.hasMore,
         tableLoading: false,
       };
+    }
 
     case 'SET_STATS':
       return {
@@ -93,6 +100,12 @@ function reducer(state: AppState, action: Action): AppState {
 
     case 'SET_ERROR':
       return { ...state, error: action.error };
+
+    case 'SET_DELETE_WARNING':
+      return { ...state, deleteWarning: action.warning };
+
+    case 'SET_ACTIVE_VISITORS':
+      return { ...state, activeVisitors: action.count };
 
     case 'RESET_TABLE':
       return {
